@@ -14,8 +14,8 @@ class CorsConfig {
             override fun addCorsMappings(registry: CorsRegistry) {
                 registry.addMapping("/**")
                     .allowedOrigins(
-                        "https://llibresencatala.cat",
-                        "https://www.llibresencatala.cat"
+                        "https://blog.vitr.studio",
+                        "https://www.blog.vitr.studio"
                     )
                     .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                     .allowedHeaders("*")

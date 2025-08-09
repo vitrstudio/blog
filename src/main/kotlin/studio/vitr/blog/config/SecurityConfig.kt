@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy.STATELESS
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.web.cors.CorsConfigurationSource
 import studio.vitr.blog.service.AuthenticationService
 import studio.vitr.blog.service.UserService
 
@@ -15,7 +16,8 @@ import studio.vitr.blog.service.UserService
 @EnableWebSecurity
 class SecurityConfig(
     private val authenticationService: AuthenticationService,
-    private val userService: UserService
+    private val userService: UserService,
+    private val corsConfigurationSource: CorsConfigurationSource
 ) {
 
     @Bean
@@ -25,6 +27,7 @@ class SecurityConfig(
             .requestMatchers("/health")
             .requestMatchers("/auth/**")
         }
+        .cors { it.configurationSource(corsConfigurationSource) }
         .csrf { it.disable() }
         .sessionManagement { it.sessionCreationPolicy(STATELESS) }
         .authorizeHttpRequests { it.anyRequest().permitAll() }
@@ -33,6 +36,7 @@ class SecurityConfig(
     @Bean
     @Order(2)
     fun protectedSecurityChain(http: HttpSecurity): SecurityFilterChain = http
+        .cors { it.configurationSource(corsConfigurationSource) }
         .csrf { it.disable() }
         .sessionManagement { it.sessionCreationPolicy(STATELESS) }
         .authorizeHttpRequests { it.anyRequest().authenticated() }

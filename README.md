@@ -1,5 +1,5 @@
-# Seed API
-Seed is a RESTful API template.
+# Blog API
+Blog is a RESTful API template.
 
 ## Run app locally
 `docker-compose -f docker-compose.yml up -d`

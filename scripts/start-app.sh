@@ -5,11 +5,11 @@ set -eux
 cd /home/ec2-user/app
 
 # build a fresh image
-docker build -t seed .
+docker build -t blog .
 
 # run the container in detached mode
 docker run -d \
-  --name seed \
+  --name blog \
   -p 80:8080 \
   -e PROJECT_NAME="${PROJECT_NAME}" \
   -e DB_NAME="${DB_NAME}" \
@@ -17,6 +17,6 @@ docker run -d \
   -e DB_USERNAME="${DB_USERNAME}" \
   -e DB_PASSWORD="${DB_PASSWORD}" \
   --restart unless-stopped \
-  seed
+  blog
 
-echo "✅ seed is up and running"
+echo "✅ blog is up and running"

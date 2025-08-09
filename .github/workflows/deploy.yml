@@ -1,9 +1,8 @@
 name: Deploy to AWS
 
-# Comment this out to enable the CI/CD pipeline
 on:
-  #push:
-    # branches: [main]
+  push:
+    branches: [main]
 
 jobs:
   deploy:
@@ -15,9 +14,9 @@ jobs:
 
     env:
       AWS_REGION: us-east-1
-      GITHUB_ROLE_ARN: arn:aws:iam::962926148312:role/seed-github-actions-role
-      PROJECT_NAME: seed
-      DB_NAME: seeddb
+      GITHUB_ROLE_ARN: arn:aws:iam::962926148312:role/blog-github-actions-role
+      PROJECT_NAME: blog
+      DB_NAME: blogdb
 
     steps:
       - name: Checkout code
@@ -50,11 +49,11 @@ jobs:
       - name: Retrieve deployment values from SSM
         id: fetch_params
         run: |
-          EC2_INSTANCE_ID=$(aws ssm get-parameter --name /seed/ec2_instance_id --with-decryption --query Parameter.Value --output text)
-          RDS_ENDPOINT=$(aws ssm get-parameter --name /seed/rds_endpoint --with-decryption --query Parameter.Value --output text)
-          DEPLOYMENT_BUCKET=$(aws ssm get-parameter --name /seed/deployment_bucket --with-decryption --query Parameter.Value --output text)
-          DB_PASSWORD=$(aws ssm get-parameter --name /seed/db_password --with-decryption --query Parameter.Value --output text)
-          JWT_SECRET=$(aws ssm get-parameter --name /seed/jwt_secret --with-decryption --query Parameter.Value --output text)
+          EC2_INSTANCE_ID=$(aws ssm get-parameter --name /blog/ec2_instance_id --with-decryption --query Parameter.Value --output text)
+          RDS_ENDPOINT=$(aws ssm get-parameter --name /blog/rds_endpoint --with-decryption --query Parameter.Value --output text)
+          DEPLOYMENT_BUCKET=$(aws ssm get-parameter --name /blog/deployment_bucket --with-decryption --query Parameter.Value --output text)
+          DB_PASSWORD=$(aws ssm get-parameter --name /blog/db_password --with-decryption --query Parameter.Value --output text)
+          JWT_SECRET=$(aws ssm get-parameter --name /blog/jwt_secret --with-decryption --query Parameter.Value --output text)
 
           echo "::add-mask::$DB_PASSWORD"
           echo "::add-mask::$DEPLOYMENT_BUCKET"
@@ -88,8 +87,8 @@ jobs:
               "set -eux",
               "export PROJECT_NAME=$PROJECT_NAME",
               "export DB_NAME=$DB_NAME",
-              "docker stop seed || true",
-              "docker rm seed || true",
+              "docker stop blog || true",
+              "docker rm blog || true",
               "rm -rf /home/ec2-user/app",
               "mkdir -p /home/ec2-user/app",
               "aws s3 cp s3://$DEPLOYMENT_BUCKET/deployments/app.jar /home/ec2-user/app/app.jar",
@@ -97,7 +96,7 @@ jobs:
               "aws s3 cp s3://$DEPLOYMENT_BUCKET/deployments/start-app.sh /home/ec2-user/app/start-app.sh",
               "chmod +x /home/ec2-user/app/start-app.sh",
               "export DB_URL=jdbc:postgresql://$RDS_ENDPOINT/$DB_NAME",
-              "export DB_USERNAME=seeddbadmin",
+              "export DB_USERNAME=blogdbadmin",
               "export DB_PASSWORD=$DB_PASSWORD",
               "bash /home/ec2-user/app/start-app.sh"
             ]
@@ -111,7 +110,7 @@ jobs:
           COMMAND_ID=$(aws ssm send-command \
             --document-name AWS-RunShellScript \
             --instance-ids $EC2_INSTANCE_ID \
-            --comment "Deploy seed app" \
+            --comment "Deploy blog app" \
             --parameters file://ssm-params.json \
             --output-s3-bucket-name $DEPLOYMENT_BUCKET \
             --output-s3-key-prefix ssm-logs/$EC2_INSTANCE_ID \

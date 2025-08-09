@@ -98,6 +98,7 @@ jobs:
               "export DB_URL=jdbc:postgresql://$RDS_ENDPOINT/$DB_NAME",
               "export DB_USERNAME=blogdbadmin",
               "export DB_PASSWORD=$DB_PASSWORD",
+              "export JWT_SECRET=$JWT_SECRET"
               "bash /home/ec2-user/app/start-app.sh"
             ]
           }

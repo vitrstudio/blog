@@ -1,6 +1,6 @@
 package studio.vitr.blog.model.api
 
-class Health(
+data class Health(
     val status: HealthStatus,
     val version: String
 )

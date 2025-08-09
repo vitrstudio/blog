@@ -17,3 +17,4 @@ This application uses BCrypt for password encryption. All passwords are automati
 
 ### Security Configuration
 The application includes a `SecurityConfig` that disables default Spring Security authentication while keeping BCrypt available for password encoding.
+
